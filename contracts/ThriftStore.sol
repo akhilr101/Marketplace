@@ -76,10 +76,12 @@ contract ThriftStore {
     }
 
     // Function to send ethers between users
-    function sendEther(address payable recipient, uint256 amount) public {
-        address sender = msg.sender;
-        recipient.transfer(amount);
-    }
+function sendEther(address payable _addr, uint64 _amount) public payable {
+    require(msg.value >= _amount, "Insufficient Ether");
+
+    (bool success, ) = _addr.call{value: _amount}("");
+    require(success, "Ether transfer failed");
+    }  
 
     // Function to buy an item that has been posted in the marketplace
     function buyItem(uint256 id) public payable validItem(id) {
